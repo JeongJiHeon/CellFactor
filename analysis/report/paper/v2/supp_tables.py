@@ -97,7 +97,7 @@ S["S4_Selected_gene_panel"] = pd.DataFrame(rows)
 cox = json.load(open(MR / "exp3/COX_ADJ.json")); rows = []
 for r in cox:
     base = {"Cancer": r["organ"].capitalize(), "Cohort": r["cohort"], "n": r["n"], "Events": r["events"], "Covariates": r["covariates"]}
-    rows.append({**base, "Term": "CellFactor risk (per SD)", "HR unadjusted": r["HR_unadj"], "HR adjusted": r["HR_adj"], "CI low": r["HR_lo"], "CI high": r["HR_hi"], "P": r["p_wald"], "P (LR)": r["p_LR"],
+    rows.append({**base, "Term": "CellFactor risk (per SD)", "HR unadjusted": r["HR_unadj"], "Unadj. CI low": r["HR_unadj_lo"], "Unadj. CI high": r["HR_unadj_hi"], "P unadjusted": r["p_unadj_wald"], "HR adjusted": r["HR_adj"], "CI low": r["HR_lo"], "CI high": r["HR_hi"], "P": r["p_wald"], "P (LR)": r["p_LR"],
                  "C covariates (in-sample)": r["C_cov_insample"], "C covariates + risk (in-sample)": r["C_cov_plus_risk_insample"]})
     for k, v in r.items():
         if k.startswith("type::"): rows.append({**base, "Term": f"{k[6:]} contribution (per SD)", "HR adjusted": v["HR"], "CI low": v["lo"], "CI high": v["hi"], "P": v["p"]})

@@ -164,7 +164,7 @@ for fn in (cohort_scanb, cohort_metabric, cohort_gse14520, cohort_gse76427, lamb
     hr, lo, hi = (float(np.exp(m1.params_["risk"])), *[float(np.exp(v)) for v in m1.confidence_intervals_.loc["risk"].values])
     c0 = concordance_index(df["T"], -m0.predict_partial_hazard(df), df["E"]); c1 = concordance_index(df["T"], -m1.predict_partial_hazard(df), df["E"])
     rec = {"organ": org, "cohort": coh, "n": int(len(df)), "events": int(df.E.sum()), "covariates": ", ".join(covcols), "note": note, "penalizer": p1,
-           "HR_unadj": float(np.exp(mr.params_["risk"])), "HR_adj": hr, "HR_lo": lo, "HR_hi": hi, "p_wald": float(m1.summary.loc["risk", "p"]), "p_LR": p_lr,
+           "HR_unadj": float(np.exp(mr.params_["risk"])), "HR_unadj_lo": float(np.exp(mr.confidence_intervals_.loc["risk"].values[0])), "HR_unadj_hi": float(np.exp(mr.confidence_intervals_.loc["risk"].values[1])), "p_unadj_wald": float(mr.summary.loc["risk", "p"]), "HR_adj": hr, "HR_lo": lo, "HR_hi": hi, "p_wald": float(m1.summary.loc["risk", "p"]), "p_LR": p_lr,
            "C_cov_insample": float(c0), "C_cov_plus_risk_insample": float(c1),
            "verdict": "independent of covariates" if lo > 1 else "not shown"}
     for nm in TOP3(org):   # 보조: 세포유형 기여 하나씩

@@ -65,7 +65,7 @@ rows2 = []
 for coh in order:
     r = next(x for x in C if x["cohort"] == coh)
     rows2.append({"Cancer": r["organ"].capitalize(), "Cohort": coh, "n (events)": f"{r['n']} ({r['events']})", "Adjustment covariates": CV[coh],
-                  "Unadjusted HR": f"{r['HR_unadj']:.2f}", "Adjusted HR (95% CI)": f"{r['HR_adj']:.2f} ({r['HR_lo']:.2f}–{r['HR_hi']:.2f})",
+                  "Unadjusted HR (95% CI)": f"{r['HR_unadj']:.2f} ({r['HR_unadj_lo']:.2f}–{r['HR_unadj_hi']:.2f})", "Adjusted HR (95% CI)": f"{r['HR_adj']:.2f} ({r['HR_lo']:.2f}–{r['HR_hi']:.2f})",
                   "P (likelihood ratio)": f"{r['p_LR']:.2g}"})
 T2 = pd.DataFrame(rows2); T2.to_csv(OUTD / "Table2.csv", index=False)
 md2 = ["**Table 2. Clinical-adjusted prognostic association of CellFactor risk.**", "", "| " + " | ".join(T2.columns) + " |", "|" + "---|" * len(T2.columns)]

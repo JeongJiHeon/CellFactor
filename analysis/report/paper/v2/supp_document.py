@@ -34,7 +34,7 @@ FIGS = [
      "(blue line; bar, patient-bootstrap 95% CI), compared with 1,000 random sets of five axes (grey; dashed line, 95th percentile). "
      "Axes were ranked by contribution magnitude, which does not use outcomes. No retraining was performed, so the analysis measures the reliance of the trained model on these axes, "
      "not whether other axes could recover the information. A clear effect was observed only in breast cancer; across individual axes, contribution magnitude did not track the deletion effect "
-     "in any cancer (Spearman ρ −0.05, −0.02 and 0.20; Table S8)."),
+     "in any cancer (Spearman ρ 0.13, −0.02 and 0.20; Table S8)."),
     ("S6_domain_gap.png", "Figure S6. Pseudo-bulk–bulk domain gap and the effect of conditional CORAL.",
      "(a) PCA of the 3,000-gene selected panel for training-donor pseudo-bulk bags (grey, n = 300) and TCGA bulk (blue), in a common unit "
      "(log2 CPM re-normalised within the same gene set) and as the domain-standardised model input. AUROC, 5-fold cross-validated domain classifiers "
@@ -50,7 +50,7 @@ FIGS = [
      "relative change in held-out-donor pseudo-bulk state error (MAE relative to a constant predictor; open circles, breast, whose donors were all used in training, so the breast value is in-sample); "
      "and domain-classifier AUROC (median of chains) on composition-adjusted features and after removing domain means within training folds. "
      "Linear separation disappears once means are removed, whereas a random forest still separates the domains; a control splitting pseudo-bulk bags at random gave AUROC ≈ 0.5. "
-     "CORAL therefore reduced the covariance mismatch it targets without making the domains indistinguishable; state error was similar or lower, and the external C-index was 0.010–0.016 higher, "
+     "CORAL therefore reduced the covariance mismatch it targets without making the domains indistinguishable; state error was similar or lower, and the external C-index was 0.010–0.021 higher, "
      "with a CI excluding zero only in breast cancer."),
     ("S7_simulation.png", "Figure S7. Recovery of known risk contributions in semi-synthetic cohorts.",
      "Synthetic breast cancer patients (1,024 cells each; 500 training and 500 test patients per replicate; 10 replicates) were assembled from GSE161529 single cells, "

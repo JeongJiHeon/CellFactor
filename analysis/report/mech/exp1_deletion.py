@@ -7,13 +7,14 @@
 출력 results/mech/exp1/{organ}_{PROGRAMS,CELLTYPES,SUMMARY}.{csv,json} (+ results_json 미러)"""
 import json, os
 from pathlib import Path
+import os
 import numpy as np, pandas as pd, torch
 from lifelines.utils import concordance_index
 
 ROOT = Path(__file__).resolve().parents[3]; OUT = ROOT / "results/mech/exp1"; OUT.mkdir(parents=True, exist_ok=True)
 OUTJ = ROOT / "results_json/mech/exp1"; OUTJ.mkdir(parents=True, exist_ok=True)
 CH = range(1, 7); RNG = np.random.default_rng(0)
-CFG = {"breast": ("BREAST", ["SCAN-B|OS", "SCAN-B|RFi", "SCAN-B|DRFi", "SCAN-B|BCFi", "METABRIC|OS", "METABRIC|RFS"], 0.6175),
+CFG = {"breast": ("BREAST", ["SCAN-B|OS", "SCAN-B|RFi", "SCAN-B|DRFi", "SCAN-B|BCFi", "METABRIC|OS", "METABRIC|RFS"], float(os.environ.get("C_REF_BREAST", "0.6175"))),
        "liver": ("LIVER", ["GSE14520|OS", "GSE14520|RFS", "GSE76427|OS", "GSE76427|RFS"], 0.6000),
        "pancreas": ("PANC", ["GSE62452|OS", "GSE57495|OS", "GSE85916|OS"], 0.6213)}
 ORGS = os.environ.get("ORGS", "breast,liver,pancreas").split(",")

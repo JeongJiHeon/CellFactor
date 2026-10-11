@@ -159,7 +159,7 @@ def evaluate(draw):
 
 
 pt = evaluate(None)
-PAPER = {"breast": 0.6175, "liver": 0.600, "pancreas": 0.621}[ORG]   # 유방 2026-10-11 α 자유(PLAN_ALPHA_FREE)
+PAPER = {"breast": float(os.environ.get("C_REF_BREAST", "0.6175")), "liver": 0.600, "pancreas": 0.621}[ORG]   # 유방 2026-10-11 α 자유(PLAN_ALPHA_FREE)
 assert abs(pt["CORAL_on"]["external_mean"] - PAPER) < 1.5e-3, (pt, PAPER)
 rng = np.random.default_rng(0); BS = [evaluate({c: rng.integers(0, n, n) for c, n in ncoh.items()}) for _ in range(2000)]
 res["B6"] = {"point": pt}
