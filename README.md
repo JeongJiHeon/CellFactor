@@ -121,3 +121,7 @@ These inputs are not included in this repository.
 The single-cell references (GEO GSE176078, GSE151530 and GSE202051), TCGA bulk RNA-seq (TCGA-BRCA,
 TCGA-LIHC and TCGA-PAAD) and the external cohorts used in the paper are publicly available; accession
 numbers are listed in the manuscript.
+
+## License
+
+Released under the MIT License; see [LICENSE](LICENSE).
