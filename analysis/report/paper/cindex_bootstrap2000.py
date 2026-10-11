@@ -20,7 +20,7 @@ UNITS = [("CellFactor", "acand3k"), ("CellFactor (c1–c6)", "acand3k_c1-6"), ("
 _ab = ROOT / f"results/mech/ablation_risks/{ORG}.npz"
 if _ab.exists():
     Z_ = np.load(_ab); zf = lambda v: (v - np.nanmean(v)) / (np.nanstd(v) + 1e-12)
-    for lab, key in (("Program-score Cox", "programscore"), ("Composition + program-score Cox", "comp_programscore"), ("State-only model", "stateonly")):
+    for lab, key in (("Program-score Cox", "programscore"), ("Composition + program-score Cox", "comp_programscore"), ("State-only model", "stateonly"), ("Proliferation-score Cox (post hoc)", "prolifscore")):
         ENS[key] = {c: np.mean([zf(np.asarray(r, float)) for r in Z_[f"{key}__{c}"]], 0) for c in next(iter(ENS.values())) if f"{key}__{c}" in Z_.files}
         UNITS.append((lab, key))
 UNITS = [(a, u) for a, u in UNITS if u in ENS]

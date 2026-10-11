@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""PLAN_ABLATION_BASELINES — 단순화 모델 3종의 환자별 위험(CellFactor 구성요소로 재구현). env ORG · DEV.
+"""PLAN_ABLATION_BASELINES — 단순화 모델 3종 + 증식 점수 단독 Cox(2026-10-11 사후)의 환자별 위험(CellFactor 구성요소로 재구현). env ORG · DEV.
 출력 results/mech/ablation_risks/{ORG}.npz  키 '{unit}__{cohort}' = (구성원 수, n) 배열 · {ORG}_INFO.json"""
 import os, sys, json
 ORG = os.environ["ORG"]; DEV_S = os.environ.get("DEV", "cuda:0")
@@ -62,9 +62,12 @@ def fit_cv(Xm):
 out, info = {}, {"organ": ORG, "programs": progs, "n_programs": len(progs)}
 w1, l1, cv1 = fit_cv(Z(Str)); info["program_score_cox"] = {"lambda": l1, "cv": cv1}
 w2, l2, cv2 = fit_cv(np.hstack([PZ(pi_tr), Z(Str)])); info["composition_plus_program_score_cox"] = {"lambda": l2, "cv": cv2}
+# 2026-10-11 리뷰 대응 사후 기준선: bulk 증식 점수(CS_PROLIFERATION) 하나로 단변량 Cox(벌점 없음; 단일 변수라 C 는 부호에만 의존)
+jP = progs.index("CS_PROLIFERATION"); wP = fitw(Z(Str)[:, [jP]], t_tr, e_tr, 0.0); info["proliferation_score_cox"] = {"program": "CS_PROLIFERATION", "n_genes": len(idx["CS_PROLIFERATION"]), "beta": float(wP[0])}
 for n in [k for k in X if k in PI]:
     s = Z(sig(X[n])); p = PZ(PI[n]); assert len(s) == len(p), (n, len(s), len(p))
     out[f"programscore__{n}"] = (s @ w1)[None]; out[f"comp_programscore__{n}"] = (np.hstack([p, s]) @ w2)[None]
+    out[f"prolifscore__{n}"] = (s[:, [jP]] @ wP)[None]
     st = []
     for c in range(6):
         pb, es = PB[c], ES[c]; pbar = pb["pi"].double().numpy()[tr].mean(0); W = pb["W"].double().numpy(); a = pb["alpha"].double().numpy()
