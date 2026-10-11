@@ -14,8 +14,8 @@ stages
   stage3  ridge Cox readout W and alpha (all organs) on TCGA training patients           out/stage3.pt
   all     stage1 -> bags -> h -> stage3   (2A is read from --a_dir, default = the paper's 2A checkpoints)
 
-Inputs (prepared upstream, paths in ORGANS, relative to ROOT; set ROOT with --root or the CELLFACTOR_ROOT
-environment variable, default = current directory):
+Inputs (prepared upstream; <ROOT>/<organ>/<file>, see ORGANS and README.md; set ROOT with --root or the
+CELLFACTOR_ROOT environment variable, default = current directory):
   stage1_data  single-cell counts / cell type / donor / donor split / gene names, TCGA survival (liver, pancreas)
   teacher      scGPT embedding of every reference cell computed on the selected 3,000-gene panel
   programs     program dictionary {program: [genes]} restricted to the selected panel
@@ -46,19 +46,17 @@ from model import (CellFactorRisk, CompositionEnsemble, CompositionEstimator, Pr
                    load_composition_estimator, log_normalize, weighted_delta_loss, weighted_state_loss)
 
 ROOT = Path(os.environ.get("CELLFACTOR_ROOT", "."))   # data root; overridden by --root
-_LIVER = "results/stage2_redesign/run_20260823_liver_online_domain_adaptive_h_v1"
-_PANC = "sandbox6/results/stage2_redesign/run_20260823_pancreas_online_domain_adaptive_h_v1"
 ORGANS = {
     "breast": dict(
-        stage1_data="results/panel16k_g176/G176_STAGE1_DATA.pt",
-        teacher="weights/hvg_run1a/breast/teacher/G176_cand3k_TEACHER.pt",
-        programs="results/tcga_panel/design/dicts/breast_cand3k_PROGRAM_SETS_MIN.json",
-        panel="results/tcga_panel/breast/cand3k.txt",
-        registry="results/stage2_redesign/run_20260830_g176v2/00_registry/prepared_v2_all26.pt",
-        registry_2a="results/stage2_redesign/run_20260828_p16k/00_registry/prepared_v2.pt",
-        labels_2a="results/stage2_redesign/run_20260828_p16k_stage2a_100k/BREAST_2A_SUPERVISION.pt",   # labels re-matched by exact TCGA IDs
-        a_dir="results/stage2_redesign/run_20260828_p16k_stage2a_100k/stage2a_composition/breast/checkpoints",
-        survival="results/w_exp/cache/TCGA_endpoints.pt",
+        stage1_data="breast/stage1_data.pt",
+        teacher="breast/teacher.pt",
+        programs="breast/programs.json",
+        panel="breast/panel.txt",
+        registry="breast/registry.pt",          # pseudobulk standardisation from all 26 reference donors
+        registry_2a="breast/registry_2a.pt",    # registry used to train Stage 2A
+        labels_2a="breast/labels_2a.pt",        # 2A labels re-matched to bulk rows by exact TCGA patient ID
+        a_dir="breast/stage2a",
+        survival="breast/survival.pt",
         tumor="Cancer Epithelial", immune=["B-cells", "Myeloid", "Plasmablasts", "T-cells"],
         s1_epochs=90, h_steps=4000,
         bag_seeds={"trainsel": 20279555, "val": 20271701, "test": 20271702}, bag_n={"trainsel": 300, "val": 1200, "test": 400},
@@ -70,13 +68,13 @@ ORGANS = {
         a2_val_dropout=False,
         infer_batch=512),           # bulk inference batch size before Stage 3 (as in the original runs; Stage 3 amplifies ULP differences)
     "liver": dict(
-        stage1_data="results/liver/LIVER_STAGE1_DATA.pt",
-        teacher="weights/hvg_run1a/liver/teacher/LIVER_cand3k_TEACHER.pt",
-        programs="results/tcga_panel/design/dicts/liver_cand3k_PROGRAM_SETS_MIN.json",
-        panel="results/tcga_panel/liver/cand3k.txt",
-        registry=f"{_LIVER}/00_registry/prepared_liver_preprocess_v2_seed20260821.pt",
-        registry_2a=f"{_LIVER}/00_registry/prepared_liver_preprocess_v2_seed20260821.pt",
-        a_dir=f"{_LIVER}/stage2a_composition/liver/checkpoints",
+        stage1_data="liver/stage1_data.pt",
+        teacher="liver/teacher.pt",
+        programs="liver/programs.json",
+        panel="liver/panel.txt",
+        registry="liver/registry.pt",
+        registry_2a="liver/registry.pt",        # same registry for Stage 2A
+        a_dir="liver/stage2a",
         survival=None,              # TCGA survival stored in stage1_data
         tumor="Malignant cells", immune=["B cells", "T cells", "TAMs"],
         s1_epochs=30, h_steps=4000,
@@ -84,13 +82,13 @@ ORGANS = {
         calib_from=("train", 20279777, 300),   # a separate 300-bag draw from training donors
         z_clip=None, h_monitor="trainsel", h_keep="best", real_rows="fit", alpha_free=True, a2_val_dropout=True, infer_batch=128),
     "pancreas": dict(
-        stage1_data="sandbox6/results/pancreas/PANC_STAGE1_DATA.pt",
-        teacher="weights/hvg_run1a/pancreas/teacher/PANC_cand3k_TEACHER.pt",
-        programs="results/tcga_panel/design/dicts/pancreas_cand3k_PROGRAM_SETS_MIN.json",
-        panel="results/tcga_panel/pancreas/cand3k.txt",
-        registry=f"{_PANC}/00_registry/prepared_pancreas_preprocess_v2_seed20260821.pt",
-        registry_2a=f"{_PANC}/00_registry/prepared_pancreas_preprocess_v2_seed20260821.pt",
-        a_dir=f"{_PANC}/stage2a_composition/pancreas/checkpoints",
+        stage1_data="pancreas/stage1_data.pt",
+        teacher="pancreas/teacher.pt",
+        programs="pancreas/programs.json",
+        panel="pancreas/panel.txt",
+        registry="pancreas/registry.pt",
+        registry_2a="pancreas/registry.pt",     # same registry for Stage 2A
+        a_dir="pancreas/stage2a",
         survival=None,
         tumor="Epithelial", immune=["Immune"], n_immune_head=3,
         s1_epochs=30, h_steps=10000,

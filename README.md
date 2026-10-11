@@ -42,9 +42,10 @@ cohort-wise z-score mean of the risks of six independently trained chains (c1–
 
 ## Usage
 
-`train.py` reads pre-processed inputs from a data root. The file paths for each cancer type (`breast`, `liver`,
-`pancreas`) are listed in the `ORGANS` dictionary at the top of `train.py` and are relative to the data root,
-which is set with `--root` or the `CELLFACTOR_ROOT` environment variable (default: the current directory).
+`train.py` reads pre-processed inputs from a data root, set with `--root` or the `CELLFACTOR_ROOT` environment
+variable (default: the current directory). Each cancer type (`breast`, `liver`, `pancreas`) has its own folder
+under the data root (see [Inputs](#inputs)); the file names are defined in the `ORGANS` dictionary at the top of
+`train.py`.
 
 ```bash
 # one full chain (Stage 1 -> bags -> Stage 2B -> Stage 3), reusing the three Stage 2A checkpoints
@@ -63,14 +64,45 @@ Seeds follow the paper: chain `c` uses Stage 1 seed `20260825 + c − 1` and the
 
 ### Inputs
 
-| Key in `ORGANS` | Contents |
-|---|---|
-| `stage1_data` | single-cell counts, cell types, donors, donor split and gene names (liver and pancreas: also TCGA survival) |
-| `teacher` | frozen scGPT embedding of every reference cell, computed on the selected 3,000-gene panel |
-| `programs` | program dictionary `{program: [genes]}` restricted to the selected panel |
-| `panel` | the selected 3,000-gene panel (PACE decoder genes and CCSE input genes) |
-| `registry` | TCGA bulk expression (standardised; breast log2(1 + CPM), liver and pancreas log2(count + 1)), patient split, Stage 2A labels and pseudo-bulk standardisation statistics |
-| `survival` | TCGA endpoints (breast) |
+```
+<root>/
+├── breast/
+│   ├── stage1_data.pt
+│   ├── teacher.pt
+│   ├── programs.json
+│   ├── panel.txt
+│   ├── registry.pt
+│   ├── registry_2a.pt
+│   ├── labels_2a.pt
+│   ├── survival.pt
+│   └── stage2a/            cell_fraction_measurement_aware_seed{20260821,20260822,20260823}.pt
+├── liver/
+│   ├── stage1_data.pt
+│   ├── teacher.pt
+│   ├── programs.json
+│   ├── panel.txt
+│   ├── registry.pt
+│   └── stage2a/            (same three Stage 2A checkpoints)
+└── pancreas/
+    ├── stage1_data.pt
+    ├── teacher.pt
+    ├── programs.json
+    ├── panel.txt
+    ├── registry.pt
+    └── stage2a/            (same three Stage 2A checkpoints)
+```
+
+| File | Key in `ORGANS` | Contents |
+|---|---|---|
+| `stage1_data.pt` | `stage1_data` | single-cell counts, cell types, donors, donor split and gene names (liver and pancreas: also TCGA survival) |
+| `teacher.pt` | `teacher` | frozen scGPT embedding of every reference cell, computed on the selected 3,000-gene panel |
+| `programs.json` | `programs` | program dictionary `{program: [genes]}` restricted to the selected panel |
+| `panel.txt` | `panel` | the selected 3,000-gene panel, one gene per line (PACE decoder genes and CCSE input genes) |
+| `registry.pt` | `registry` | TCGA bulk expression (standardised; breast log2(1 + CPM), liver and pancreas log2(count + 1)), patient split, Stage 2A labels and pseudo-bulk standardisation statistics |
+| `registry_2a.pt` | `registry_2a` | breast only: the registry used to train Stage 2A (liver and pancreas use `registry.pt`) |
+| `labels_2a.pt` | `labels_2a` | breast only: Stage 2A labels re-matched to the bulk rows by exact TCGA patient ID |
+| `survival.pt` | `survival` | breast only: TCGA endpoints (liver and pancreas survival is stored in `stage1_data.pt`) |
+| `stage2a/` | `a_dir` | the three Stage 2A checkpoints reused by default (or produced with `--stage 2a`) |
 
 These inputs are not included in this repository.
 
