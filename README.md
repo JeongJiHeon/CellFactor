@@ -35,10 +35,12 @@ cohort-wise z-score mean of the risks of six independently trained chains (c1–
 
 ## Requirements
 
-- Python 3.10
-- PyTorch (CUDA GPU recommended)
-- NumPy
-- lifelines (only for the held-out C-index printed after Stage 3)
+Python 3.10 and the packages in `requirements.txt` (the versions used in the paper). `model.py` and `train.py`
+need only PyTorch, NumPy and lifelines; a CUDA GPU is recommended.
+
+```bash
+pip install -r requirements.txt
+```
 
 ## Usage
 

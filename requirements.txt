@@ -1,0 +1,15 @@
+# Python 3.10 (the paper used 3.10.14). Install PyTorch for your CUDA version from https://pytorch.org.
+# Model and training (model.py, train.py)
+torch==2.13.0
+numpy==1.26.4
+lifelines==0.30.0
+# Analyses reported in the paper
+scipy==1.15.3
+scikit-learn==1.7.2
+pandas==2.3.3
+statsmodels==0.14.6
+scanpy==1.11.5
+anndata==0.11.4
+python-igraph==0.9.9
+umap-learn==0.5.7
+matplotlib==3.9.2
