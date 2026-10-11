@@ -19,6 +19,8 @@ so that every patient's risk decomposes exactly into additive cell-type- and pro
 |---|---|
 | `model.py` | Model definitions: `ProgramAnchoredNBVAE` (PACE, Stage 1), `CompositionEstimator` (CCE, Stage 2A), `StateEstimator` (CCSE, Stage 2B), `CellFactorRisk` (CSRF, Stage 3), the losses (masked state, paired-delta, conditional CORAL, Cox), axis calibration, and checkpoint loaders. `CellFactor` wraps the frozen modules for inference. |
 | `train.py` | Training of one model chain, stage by stage, with the settings used in the paper. |
+| `analysis/` | Scripts used to compute the reported results and draw the figures and tables, with an index from each figure and table to its scripts ([`analysis/README.md`](analysis/README.md)). |
+| `requirements.txt` | Package versions used in the paper. |
 
 ## Model stages
 
