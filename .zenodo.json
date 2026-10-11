@@ -1,0 +1,16 @@
+{
+  "title": "CellFactor: factorizing bulk-derived survival risk into cell-type composition and within-cell-type state",
+  "upload_type": "software",
+  "description": "Source code of CellFactor, which estimates cell-type composition and within-cell-type program states from bulk transcriptomes and factorizes survival risk into additive composition-by-state contributions. The archive contains the model definition (model.py), the training script (train.py), the analysis scripts used for the figures and tables of the paper (analysis/), and the package versions used (requirements.txt).",
+  "creators": [
+    {"name": "Jeong, Jiheon", "affiliation": "Department of AI Healthcare Convergence, CHA University"},
+    {"name": "Kim, In-Hwan", "affiliation": "Department of Biomedical Informatics, CHA University School of Medicine"},
+    {"name": "Nam, Yujin", "affiliation": "Medical AI Research Center, CHA Bundang Medical Center, CHA University School of Medicine"},
+    {"name": "Cho, Baek Hwan", "affiliation": "Department of Biomedical Informatics, CHA University School of Medicine"}
+  ],
+  "license": "MIT",
+  "keywords": ["single-cell RNA sequencing", "bulk RNA sequencing", "survival analysis", "cell-type deconvolution", "cell state", "transcriptional programs", "interpretable machine learning"],
+  "related_identifiers": [
+    {"identifier": "https://github.com/JeongJiHeon/CellFactor", "relation": "isSupplementTo", "scheme": "url"}
+  ]
+}
