@@ -82,14 +82,14 @@ Seeds follow the paper: chain `c` uses Stage 1 seed `20260825 + c − 1` and the
 │   ├── programs.json
 │   ├── panel.txt
 │   ├── registry.pt
-│   └── stage2a/            (same three Stage 2A checkpoints)
+│   └── stage2a/            cell_fraction_measurement_aware_seed{…}.pt (liver models)
 └── pancreas/
     ├── stage1_data.pt
     ├── teacher.pt
     ├── programs.json
     ├── panel.txt
     ├── registry.pt
-    └── stage2a/            (same three Stage 2A checkpoints)
+    └── stage2a/            cell_fraction_measurement_aware_seed{…}.pt (pancreas models)
 ```
 
 | File | Key in `ORGANS` | Contents |
@@ -102,7 +102,7 @@ Seeds follow the paper: chain `c` uses Stage 1 seed `20260825 + c − 1` and the
 | `registry_2a.pt` | `registry_2a` | breast only: the registry used to train Stage 2A (liver and pancreas use `registry.pt`) |
 | `labels_2a.pt` | `labels_2a` | breast only: Stage 2A labels re-matched to the bulk rows by exact TCGA patient ID |
 | `survival.pt` | `survival` | breast only: TCGA endpoints (liver and pancreas survival is stored in `stage1_data.pt`) |
-| `stage2a/` | `a_dir` | the three Stage 2A checkpoints reused by default (or produced with `--stage 2a`) |
+| `stage2a/` | `a_dir` | the three organ-specific Stage 2A checkpoints (seeds 20260821–20260823) reused by default, or produced with `--stage 2a` |
 
 These inputs are not included in this repository.
 
