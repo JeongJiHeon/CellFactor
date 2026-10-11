@@ -14,17 +14,18 @@ stages
   stage3  ridge Cox readout W and alpha (all organs) on TCGA training patients           out/stage3.pt
   all     stage1 -> bags -> h -> stage3   (2A is read from --a_dir, default = the paper's 2A checkpoints)
 
-Inputs (prepared upstream, paths in ORGANS, relative to ROOT):
+Inputs (prepared upstream, paths in ORGANS, relative to ROOT; set ROOT with --root or the CELLFACTOR_ROOT
+environment variable, default = current directory):
   stage1_data  single-cell counts / cell type / donor / donor split / gene names, TCGA survival (liver, pancreas)
   teacher      scGPT embedding of every reference cell computed on the selected 3,000-gene panel
   programs     program dictionary {program: [genes]} restricted to the selected panel
   panel        selected 3,000-gene panel (Stage 1' decoder genes and H input genes)
-  registry     TCGA bulk (bulk_x, standardised log2 CPM), patient split, 2A labels, pseudobulk standardisation
+  registry     TCGA bulk (bulk_x, standardised; breast log2(1 + CPM), liver/pancreas log2(count + 1)), patient split, 2A labels, pseudobulk standardisation
                (breast 2A labels: labels_2a, the same TCGA labels re-matched to bulk rows by exact patient ID)
 
 Survival labels are used only in Stage 3. Seeds follow the paper: chain c uses Stage 1' seed 20260825+c-1 and
-the H seed in H_SEEDS. The paper's CellFactor is the cohort-wise z-score mean of chain risks
-(breast and liver c1-c12, pancreas c1-c6).
+the H seed in H_SEEDS. The paper's CellFactor is the cohort-wise z-score mean of the risks of chains c1-c6
+in all three organs.
 """
 from __future__ import annotations
 
@@ -32,6 +33,7 @@ import argparse
 import copy
 import json
 import math
+import os
 import random
 import time
 from pathlib import Path
@@ -43,7 +45,7 @@ from model import (CellFactorRisk, CompositionEnsemble, CompositionEstimator, Pr
                    calibrate_state_axes, coarse_composition_loss, conditional_coral, cox_nll, fine_composition,
                    load_composition_estimator, log_normalize, weighted_delta_loss, weighted_state_loss)
 
-ROOT = Path("/workspace/jeongjiheon/CP_PCH_final")
+ROOT = Path(os.environ.get("CELLFACTOR_ROOT", "."))   # data root; overridden by --root
 _LIVER = "results/stage2_redesign/run_20260823_liver_online_domain_adaptive_h_v1"
 _PANC = "sandbox6/results/stage2_redesign/run_20260823_pancreas_online_domain_adaptive_h_v1"
 ORGANS = {
@@ -422,6 +424,7 @@ def train_stage3(cfg, organ, chain, out, device, a_dir):
 
 # ============================================================================= main
 def main():
+    global ROOT
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--organ", required=True, choices=list(ORGANS))
     p.add_argument("--chain", type=int, default=1)
@@ -433,7 +436,9 @@ def main():
     p.add_argument("--s1_epochs", type=int, help="override Stage 1' epochs (smoke tests)")
     p.add_argument("--a2_steps", type=int, help="override 2A steps (smoke tests)")
     p.add_argument("--device", default="cuda:0")
+    p.add_argument("--root", help="data root that the ORGANS paths are relative to (default: $CELLFACTOR_ROOT or .)")
     args = p.parse_args()
+    if args.root: ROOT = Path(args.root)
     cfg, out, dev = ORGANS[args.organ], Path(args.out), torch.device(args.device)
     out.mkdir(parents=True, exist_ok=True)
     if args.s1_epochs: cfg = {**cfg, "s1_epochs": args.s1_epochs}
